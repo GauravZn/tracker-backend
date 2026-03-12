@@ -42,6 +42,8 @@ async function syncFromMonkeytype() {
   return { fetched: tests.length, upserted };
 }
 
+app.get('/', (req,res)=>res.send('hello world'))
+
 // Route: Get Aggregated Stats
 app.get('/api/stats', async (req, res) => {
   try {
