@@ -6,11 +6,27 @@ const axios = require('axios');
 
 const app = express();
 
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  /\.vercel\.app$/  // This allows ANY subdomain on vercel.app
+];
+
 app.use(cors({
-  origin: [
-    'https://tracker-frontend-git-main-gaurav-jains-projects-c0e63fad.vercel.app', // Your specific Vercel URL
-    'http://localhost:5173' // Keep this for local testing
-  ],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some((allowed) => {
+      return allowed instanceof RegExp ? allowed.test(origin) : allowed === origin;
+    });
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST'],
   credentials: true
 }));
