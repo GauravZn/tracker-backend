@@ -5,13 +5,22 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: [
+    'https://tracker-frontend-git-main-gaurav-jains-projects-c0e63fad.vercel.app', // Your specific Vercel URL
+    'http://localhost:5173' // Keep this for local testing
+  ],
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Mongoose Schema for Monkeytype Data
 const resultSchema = new mongoose.Schema({
   _id: String, // We'll use Monkeytype's native ID here
-},{strict:false});
+}, { strict: false });
 const Result = mongoose.model('Result', resultSchema);
 
 async function syncFromMonkeytype() {
@@ -42,7 +51,7 @@ async function syncFromMonkeytype() {
   return { fetched: tests.length, upserted };
 }
 
-app.get('/', (req,res)=>res.send('hello world'))
+app.get('/', (req, res) => res.send('hello world'))
 
 // Route: Get Aggregated Stats
 app.get('/api/stats', async (req, res) => {
@@ -119,4 +128,3 @@ mongoose.connect(process.env.MONGO_URI)
     app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
   })
   .catch(err => console.error(err));
-  
